@@ -1,6 +1,6 @@
 import { assert, describe, expect, test } from 'vitest'
 import { Channel } from './Channel.js'
-import { select, SelectError, type SelectArgsMap } from './select.js'
+import { select, SelectError, type SelectOpsMap } from './select.js'
 import { expectToBlock } from './_expectToBlock.js'
 import timers from 'timers/promises'
 import { CannotWriteIntoClosedChannel } from './channel-api.js'
@@ -383,7 +383,7 @@ test('When given empty object, throws', async () => {
     await expect(s).rejects.toThrowError()
 })
 
-test('When multiple operations are ready, fairly selects the winner', async () => {
+test('When multiple operations are ready, tries to fairly select the winner', async () => {
     await testFairness(async () => {
         const r = new Channel(1)
         await r.write(1)
@@ -406,7 +406,7 @@ test('When multiple operations are ready, fairly selects the winner', async () =
      * Verify that the distribution is roughly uniform
      */
     async function testFairness(
-        makeArgs: () => Promise<SelectArgsMap>,
+        makeArgs: () => Promise<SelectOpsMap>,
     ) {
         const opToCount = new Map<string, number>()
         const runs = 10_000
