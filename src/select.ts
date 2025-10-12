@@ -88,11 +88,11 @@ export class SelectError extends NamedError {
  * await select({ a: a.raceWrite(value1), b: b.raceWrite(value2) })
  * ```
  * 
- * #### Read from `a` or time out
+ * #### Read from a channel or time out
  * 
  * ```ts
  * await select({ 
- *  didRead: a.raceRead(), 
+ *  didRead: ch.raceRead(), 
  *  timedOut: s => sleep(1000, undefined, s)
  * })
  * ```
@@ -105,22 +105,22 @@ export class SelectError extends NamedError {
  * 
  * while (true) {
  *  await select({ 
- *    didRead: a.raceRead(), 
+ *    didRead: ch.raceRead(), 
  *    timedOut: timeout 
  *  })
  * }
  * ```
  * 
- * #### Read from `a` or abort on signal
+ * #### Read from a channel or abort on signal
  * 
  * ```ts
  * await select({
- *   didRead: a.raceRead(),
+ *   didRead: ch.raceRead(),
  *   aborted: returnOnAbort(signal),
  * })
  * ```
  * 
- * #### Fairly select between settled promises:
+ * #### Fairly select between settled promises
  * 
  * ```ts
  * await select({ a: promiseA, b: promiseB })
