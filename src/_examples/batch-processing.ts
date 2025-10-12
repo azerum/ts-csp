@@ -33,8 +33,6 @@ function producer(): ReadableChannel<number> {
             await ch.write(i)
             console.log(`Wrote ${i}`)
         }
-
-        ch.close()
     })()
 
     return ch

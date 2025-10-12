@@ -5,9 +5,12 @@ import { makeAbortablePromise } from './makeAbortablePromise.js'
  * Can be cancelled with `signal`: when cancelled, throws `AbortedError` and
  * clears the timer
  */
-export function sleep<const T>(ms: number, value: T, signal?: AbortSignal): Promise<T> {
+export function sleep<const T>(ms: number, value?: T, signal?: AbortSignal): Promise<T> {
     return makeAbortablePromise(resolve => {
         const handle = setTimeout(() => {
+            //@ts-expect-error If callers omits the value, T=undefined, 
+            // and value=undefined too - no error. If caller passes 
+            // some T=R | undefined, this code is also correct
             resolve(value)
         }, ms)
 

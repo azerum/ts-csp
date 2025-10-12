@@ -4,7 +4,7 @@
  */
 
 import { Channel } from '../Channel.js'
-import { setTimeout } from 'timers/promises'
+import { sleep } from '../select-helpers.js'
 
 interface Ball {
     hits: number
@@ -32,7 +32,7 @@ async function player(table: Channel<Ball>, name: string) {
         ++ball.hits
         console.log(`${name} ${ball.hits}`)
 
-        await setTimeout(1000)
+        await sleep(1000)
         await table.write(ball)
     }
 }
@@ -43,7 +43,7 @@ async function playerWithForAwait(table: Channel<Ball>, name: string) {
         ++ball.hits
         console.log(`${name} ${ball.hits}`)
 
-        await setTimeout(1000)
+        await sleep(1000)
         await table.write(ball)
     }
 }

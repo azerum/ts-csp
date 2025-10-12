@@ -6,8 +6,8 @@
 
 import type { ReadableChannel } from '../channel-api.js'
 import { Channel } from '../Channel.js'
-import { setTimeout } from 'timers/promises'
 import { merge } from '../merge.js'
+import { sleep } from '../select-helpers.js'
 
 void main()
 
@@ -42,11 +42,11 @@ function worker(tasks: ReadableChannel<number>, index: number) {
     const output = new Channel<number>(1)
 
     void (async () => {
-        for await (const n of tasks) {
-            const result = await slowProcessing(n)
+        for await (const value of tasks) {
+            const result = await slowProcessing(value)
             await output.write(result)
 
-            console.log(`worker ${index} processed ${n}`)
+            console.log(`worker ${index} processed ${value}`)
         }
 
         output.close()
@@ -55,13 +55,13 @@ function worker(tasks: ReadableChannel<number>, index: number) {
     return output
 }
 
-async function slowProcessing(n: number) {
-    await setTimeout(1000)
-    return n * 2
+async function slowProcessing(value: number) {
+    await sleep(Math.random() * 500 + 1000)
+    return value
 }
 
 async function printer(results: ReadableChannel<number>) {
-    for await (const x of results) {
-        console.log(`Printing: ${x}`)
+    for await (const value of results) {
+        console.log(`printer got ${value}`)
     }
 }

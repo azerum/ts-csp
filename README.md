@@ -49,9 +49,13 @@ See `src/_examples` directory:
 
 - [Fast producer and slow consumer](./src/_examples/fast-producer-slow-consumer.ts): demonstrates how backpressure works
   
-- [Fan-out, fan-in](./src/_examples/fan-out-fan-in.ts): a common pattern to distribute work among N workers and merge results back
+- [Fan-out, fan-in](./src/_examples/fan-out-fan-in.ts): a common pattern to distribute work among N workers and merge the results back
 
-- [Read from multiple channels with select](./src/_examples/select-read.ts)
+- `select()`:
+  - [Read from multiple channels](./src/_examples/select-read.ts)
+  - [Write into multiple channels](./src/_examples/select-write.ts)
+  - [Cancel read by timeout](./src/_examples/select-timeout.ts)
+  - [Abort reads/writes with AbortSignal](./src/_examples/select-abort.ts)
 
 - [Batch processing](./src/_examples/batch-processing.ts): use of `partitionTime()`: 
 process channel in groups of N items. Useful e.g. to save data in DB in batches
