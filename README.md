@@ -1,10 +1,8 @@
 <span>
-  <a href="https://npmjs.org/package/@azerum/ts-csp" title="View this project on NPM">
+  <a href="" title="View this project on NPM">
     <img src="https://img.shields.io/npm/v/@azerum/ts-csp.svg" alt="NPM version" />
   </a>
-</span>
-
-<br/>
+</span><br/><br/>
 
 Go-style/CSP-style channels for TypeScript with `async`/`await`. Features:
 
@@ -13,15 +11,15 @@ for cancellation
 
 - Buffered & unbuffered channels
 
-- [`select()`](https://azerum.github.io/ts-csp/functions/select.html) like `select{}` statement in Go, for reads & writes
+- [`select()`](https://azerum.github.io/ts-csp/functions/select.html) like `select{}` statement 
+in Go, for **reads & writes**
 
-- `select()` can also take any `Promise` or cancellable
-function
+- `select()` can also take **any `Promise`** or **any async function that takes `AbortSignal`**
 
-- Timeout operations with `select()` + `sleep()`; abort
-with `select()` + `returnOnAbort()`
+- Timeout operations with `select()` + `sleep()`; abort 
+via `AbortSignal` with `select()` + `returnOnAbort()`
 
-- Return type of `select()` is inferred for nice exhaustive matching; `assertNever()` helper 
+- The return type of `select()` is inferred for nice exhaustive matching 
 
 - Operators: [`merge()`](https://azerum.github.io/ts-csp/functions/merge.html),
 [`partitionTime()`](https://azerum.github.io/ts-csp/functions/partitionTime.html)
