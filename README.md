@@ -1,3 +1,11 @@
+<span>
+  <a href="https://npmjs.org/package/@azerum/ts-csp" title="View this project on NPM">
+    <img src="https://img.shields.io/npm/v/@azerum/ts-csp.svg" alt="NPM version" />
+  </a>
+</span>
+
+<br/>
+
 Go-style/CSP-style channels for TypeScript with `async`/`await`. Features:
 
 - `async`/`await` friendly API, `for await`, `AbortSignal`
