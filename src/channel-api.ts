@@ -174,11 +174,80 @@ export interface WritableChannel<T extends NotUndefined> extends HasClosed {
 
 export class CannotWriteIntoClosedChannel extends NamedError {}
 
+/**
+ * Operation that can be used with {@link select}. Implemented by 
+ * {@link ReadableChannel.raceRead} and {@link WritableChannel.raceWrite}
+ * 
+ * Those operations cannot be modeled as a simple `Promise` as we have
+ * to separate "wait until operation can be performed" from "perform the operation", 
+ * so {@link select} can choose which operation is performed. See Motivation section
+ * for details
+ * 
+ * Has two stages:
+ * 
+ * - Wait until the operation can be performed using {@link Selectable.wait}.
+ * E.g. for read from a channel, wait until the channel is readable
+ * 
+ * - Attempt to perform the operation using {@link Selectable.attempt}.
+ *  This may fail due to races, when somebody else performs the operation
+ *  between the wait and the attempt
+ * 
+ * If {@link Selectable.attempt} fails, {@link select} re-runs {@link Selectable.wait}
+ * and tries again
+ * 
+ * #### Motivation
+ * 
+ * Once `Promise` resolves, there is not easy way to cancel it. For example,
+ * once {@link ReadableChannel.read} resolves, there is no way to put the 
+ * value back into the channel, into the exact same place in the buffer
+ * 
+ * When we want to read from one of the two channels, whichever is first, 
+ * we can't use `select({ a: a.read(), b: b.read() })` for this reason:
+ * if both `a.read()` and `b.read()` resolve at the same time, {@link select}
+ * has no way to cancel one of them
+ * 
+ * Note that passing `AbortSignal` into {@link ReadableChannel.read} 
+ * helps to cancel the read, but does not help here: if both `a.read()` and
+ * `b.read()` resolve at the same time, before signal is aborted, we have the
+ * same problem
+ * 
+ * Instead, we separate "wait until operation can be done" and "perform operation".
+ * Then select can wait for all reads, select one of them, and perform only 
+ * one. That's what `select({ a: a.raceRead(), b: raceRead() })` does
+ * 
+ * {@link Selectable} is an interface for such a two-step operation
+ * 
+ * Note that due to the separation, race conditions are possible when 
+ * between the "wait" and "perform" somebody else does the operation. 
+ * E.g. channel read is implemented as
+ * 
+ * - Wait - {@link ReadableChannel.waitUntilReadable}
+ * - Attempt - {@link ReadableChannel.tryRead}
+ * 
+ * Race is possible:
+ * 
+ * 1. `channel` is empty
+ * 2. Wait: `channel.waitUntilReadable().then(() => channel.tryRead())`
+ * 3. Somebody writes a value into `channel`. It is now readable
+ * 4. `waitUntilReadable()` resolves. It schedules the callback into the microtask queue
+ * 5. Somebody else does `channel.read()`, stealing the written value
+ * 6. Attempt: the callback runs `tryRead()`, but that returns `undefined` as 
+ * `channel` is now empty
+ */
 export interface Selectable<T> {
+    /**
+     * Waits until operation can be performed. Should resolve with value `value`.
+     * If `signal` is aborted, should throw error, preferably {@link AbortedError}
+     * for consistent style with other selectables
+     */
     wait: <const R>(value: R, signal: AbortSignal) => Promise<R>
 
     /**
-     * Callers must not mutate the returned value
+     * Tries to perform the operation. Returns either successful result with
+     * a value or a failed result
+     * 
+     * Note: callers **must not mutate** the returned value. The allows implementors
+     * to cache values
      */
     attempt: () => SelectableAttemptResult<T>
 }
