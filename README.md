@@ -58,6 +58,7 @@ See `src/_examples` directory:
   - [Write into multiple channels](./src/_examples/select-write.ts)
   - [Cancel read by timeout](./src/_examples/select-timeout.ts)
   - [Abort reads/writes with AbortSignal](./src/_examples/select-abort.ts)
+  - [Example usage without channels](./src/_examples/select-without-channels.ts): `readline` prompt with timeout
 
 - [Batch processing](./src/_examples/batch-processing.ts): use of `partitionTime()`: 
 process channel in groups of N items. Useful e.g. to save data in DB in batches
