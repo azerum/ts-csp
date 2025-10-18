@@ -62,13 +62,13 @@ export interface ReadableChannel<T extends NotUndefined> extends HasClosed, Asyn
      * - Has a value (value in the buffer or a blocked {@link WritableChannel.write} call)
      * - Is closed
      * 
-     * Intuitively, a channel is "readable", when the next 
-     * {@link ReadableChannel.read} call on it will not block
+     * Intuitively, a channel is "readable" when the next {@link ReadableChannel.read} 
+     * call on it does  not block (resolves immediately)
      * 
-     * @param value Specify value that will be returned once the wait unblocks
+     * @param value Specify a value to return once the wait unblocks
      * 
-     * @param signal Use the signal to cancel the wait. This frees up memory
-     * occupied by it. After cancelling, the wait will throw {@link AbortedError}
+     * @param signal Use signal to cancel the wait. This frees up memory
+     * occupied by the wait. After cancelling, the wait will throw {@link AbortedError}
      */
     waitUntilReadable: <const R>(value: R, signal?: AbortSignal) => Promise<R>
 
@@ -149,14 +149,13 @@ export interface WritableChannel<T extends NotUndefined> extends HasClosed {
      * - Has a free space in the buffer
      * - Has a blocked {@link ReadableChannel.read} call
      * 
-     * Intuitively, a channel is "writable", when the next 
-     * {@link WritableChannel.write} call on it will not block (will resolve
-     * or reject immediately)
+     * Intuitively, a channel is "writable" when the next {@link WritableChannel.write} 
+     * call on it does not block (resolves or rejects immediately)
      * 
-     * @param value Specify value that will be returned once the wait unblocks
+     * @param value Specify a value to return once the wait unblocks
      * 
-     * @param signal Use the signal to cancel the wait. This frees up memory
-     * occupied by it. After cancelling, the wait will throw {@link AbortedError}
+     * @param signal Use signal to cancel the wait. This frees up memory
+     * occupied by the wait. After cancelling, the wait will throw {@link AbortedError}
      */
     waitUntilWritable: <const R>(value: R, signal?: AbortSignal) => Promise<R>
 
