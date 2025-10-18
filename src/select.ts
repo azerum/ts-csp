@@ -1,4 +1,4 @@
-import { shuffle } from './_fisherYatesShuffle.js'
+import { shuffle } from './_shuffle.js'
 import { NamedError } from './_NamedError.js'
 import type { Selectable, SelectableAttemptResult } from './channel-api.js'
 
