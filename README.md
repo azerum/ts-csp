@@ -68,5 +68,5 @@ process channel in groups of N items. Useful e.g. to save data in DB in batches
 
 - Go channels
 - Communicating Sequential Processes - CSP
-- [@thi.ng/csp](thi.ng/csp) - design of return values of
+- [@thi.ng/csp](https://thi.ng/csp) - design of return values of
 `read()` and `tryRead()`
