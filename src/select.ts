@@ -13,14 +13,28 @@ export type SelectOp =
     | Promise<unknown>
     | ((signal: AbortSignal) => Promise<unknown>)
 
-export type SelectResult<TArgs extends SelectOpsMap> = ({
-    [K in StringKeyof<TArgs>]: {
+export type SelectResult<TArgs extends SelectOpsMap> = ValueOf<{
+    // 1. Keep only string keys of args passed to select(), for simplicity. 
+    // number and symbol can also be used, e.g. `select({ someSymbol: ... })`, 
+    // but seem less useful for exhaustive matching
+    //
+    // 2. Exclude args which always have `null` operation - those never win
+    // the race. Take care of conditionally-null args, e.g. 
+    //
+    // ```
+    // select({ null: null, maybeNull: someBoolean ? null : someOp })
+    // ```
+    // 
+    // Should return `{ type: 'maybeNull', value: someOpResult }`, as it 
+    // may be not null, depending on `someBoolean`
+    [K in StringKeyof<TArgs> as TArgs[K] extends null ? never : K]: {
         type: K
         value: InferSelectOpResult<TArgs[K]>
     }
-})[StringKeyof<TArgs>]
+}>
 
 type StringKeyof<T> = Extract<keyof T, string>
+type ValueOf<T> = T[keyof T]
 
 type InferSelectOpResult<T> =
     T extends Selectable<infer U>
